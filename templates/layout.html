@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/layout.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/index.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/addUser.css') }}" />
+    <title>Contacts Flask Apps</title>
+</head>
+<body>
+
+    <nav class="nav-wrapper">
+        <a class="logo-encabezado hide-on-small-only">CRUD with Python</a>
+        <a class="brand-logo hide-on-med-and-up">CRUD with Python</a>
+        <a href="#" data-target="menu-responsive" class="sidenav-trigger hide-on-med-and-up">
+            <i class="material-icons">menu</i>
+        </a>
+        <ul id="nav-mobile" class="right hide-on-small-only">
+            <li>
+                <a href="/" class="white-text">
+                    <i class="material-icons left white-text">people</i>
+                    Users
+                </a>
+            </li>
+            <li>
+                <a href="/addUser" class="white-text">
+                    <i class="material-icons left white-text">person_add</i>
+                    Add User
+                </a>
+            </li>
+            <li>
+                <a href="/" class="white-text logout">
+                    <i class="material-icons left white-text">exit_to_app</i>
+                    Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <ul class="sidenav navbar-fondo" id="menu-responsive">
+        <li>
+            <a href="/" class="white-text">
+                <i class="material-icons left white-text">people</i>
+                Users
+            </a>
+        </li>
+        <li>
+            <a href="/addUser" class="white-text">
+                <i class="material-icons left white-text">person_add</i>
+                Add User
+            </a>
+        </li>
+        <li>
+            <a href="/" class="white-text">
+                <i class="material-icons left white-text">exit_to_app</i>
+                Logout
+            </a>
+        </li>
+    </ul>
+
+    <div class="container contenido">
+        {% block body %}
+        {% endblock %}
+    </div>
+
+    <footer id="footer" class="grey darken-3">
+        <div class="container white-text">
+            <p id="p-footer">&copy; Developed by Luis Espinoza</p>
+        </div>
+    </footer>
+
+    <!--Scripts-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="{{ url_for('static', filename = 'js/index.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+{% extends 'layout.html '%}
+
+{% block body %}
+    <p class="encabezado">Edit user</p>
+
+    <div class="row">
+        <form action="/update/{{user.0}}" method="POST">
+            <div class="input-field col s6 offset-s3">
+                <i class="material-icons prefix">account_circle</i>
+                <input type="text" name="names" class="center-align" value="{{user.1}}"/>
+                <label for="names">Nombres</label>
+            </div>
+            <div class="input-field col s6 offset-s3">
+                <i class="material-icons prefix">account_circle</i>
+                <input type="text" name="lastname" class="center-align" value="{{user.2}}"/>
+                <label for="lastname">Last Name</label>
+            </div>
+            
+            <!-- <div class="input-field col s6 offset-s3">
+                <i class="material-icons prefix">account_circle</i>
+                <select multiple name="role" >
+                    <option disabled selected>Select role</option>
+                    <option value="1">Administrator</option>
+                    <option value="2">Role 1</option>
+                    <option value="3">Role 2</option>
+                    <option value="4">Role 3</option>
+                </select>
+            </div> -->
+            <div class="input-field col s6 offset-s3">
+                <i class="material-icons prefix">perm_identity</i>
+                <input type="text" name="user" class="center-align" value="{{user.4}}"/>
+                <label for="user">User</label>
+            </div>
+
+            <div class="input-field col s6 offset-s3">
+                <i class="material-icons prefix">lock_outline</i>
+                <input type="password" name="password" class="center-align" value="{{user.5}}"/>
+                <label for="password">Password</label>
+            </div>
+            <div class="input-field col s6 offset-s3">
+                <i class="material-icons prefix">lock_outline</i>
+                <input type="password" name="confirmpassword" class="center-align" value="{{user.5}}"/>
+                <label for="confirmpassword">Confirm Password</label>
+            </div>
+
+            <div class="col s6 offset-s3">
+                <button  id="save" type="submit" class="btn green darken-2 waves-effect waves-light botones-hover">
+                    <i class="material-icons left">save</i>
+                    Save
+                </button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
