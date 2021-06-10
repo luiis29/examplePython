@@ -80,6 +80,44 @@ nav ul li a:hover {
     margin-right: 15px;
 }
 
+.btn-save {
+    border-radius: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    margin-top: 20px;
+}
+
+.botones-hover:hover {
+    background-color: #424242 !important;
+}
+
+.m-bottom {
+    margin-bottom: 0px;
+    margin-top: 1.5rem;
+}
+
+.error-form {
+    color: red;
+    font-size: 13px;
+}
+
+.error-form i {
+    font-size: 22px;
+}
+
+.m-bottom-input {
+    margin-bottom: 3px !important;
+}
+
+.eye-password {
+    position: absolute;
+    right: 15px;
+    transform: translate(0, -50%);
+    top: 50%;
+    cursor: pointer;
+}
+
 @media screen and (max-width: 600px) {
     .contenido {
         min-height: calc(100vh - 136px);

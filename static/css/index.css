@@ -73,7 +73,6 @@
     font-weight: bold;
 }
 
-.botones-hover:hover {
-    background-color: #424242 !important;
+.btn-home {
+    margin-right: 10px;
 }
-

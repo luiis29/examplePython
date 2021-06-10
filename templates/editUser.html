@@ -1,44 +1,28 @@
-{% extends "layout.html" %}
+{% extends 'layout.html' %}
 
 {% block body %}
-    <p class="encabezado">Add user</p>
-    <br/>
-    {% with messages = get_flashed_messages(with_categories=True) %}
-        {% if messages %}
-            {% for typemessage, message in messages %}
-                <div id="alerta" class="row">
-                    <div class="col s6 alert {{typemessage}}">
-                        <button class="btn-alert btn-alert-{{typemessage}}" onclick="ocultarAlerta();">
-                            X
-                        </button>
-                        {{message}}
-                    </div>
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-    
+    <p class="encabezado">Edit user</p>
+
     <div class="row">
-        <form action="/insert" method="POST" id="formAddUser">
+        <form action="/update/{{user.0}}" method="POST" id="formEditUser">
             <input type="hidden" name="csrf_token" value="{{csrf_token()}}" />
             <div class="input-field col s6 offset-s3 m-bottom">
                 <i class="material-icons prefix">account_circle</i>
-                <input id="names"  type="text" name="names" class="center-align m-bottom-input"/>
-                <label for="names">Names</label>
+                <input id="names" type="text" name="names" class="center-align" value="{{user.1}}"/>
+                <label for="names">Nombres</label>
             </div>
             <div id="errorNames" class="col s6 offset-s4 error-form" hidden></div>
 
             <div class="input-field col s6 offset-s3 m-bottom">
                 <i class="material-icons prefix">account_circle</i>
-                <input id="lastname" type="text" name="lastname" class="center-align m-bottom-input"/>
+                <input id="lastname" type="text" name="lastname" class="center-align" value="{{user.2}}"/>
                 <label for="lastname">Last Name</label>
             </div>
             <div id="errorLastName" class="col s6 offset-s4 error-form" hidden></div>
-
-            <div class="input-field col s6 offset-s3  m-bottom">
+            
+            <div class="input-field col s6 offset-s3 m-bottom">
                 <i class="material-icons prefix">account_circle</i>
-                <select name="role" id="role">
-                    <option disabled selected>Select role</option>
+                <select name="role" id="role" class="selectpicker">
                     <option value="1">Administrator</option>
                     <option value="2">Role 1</option>
                     <option value="3">Role 2</option>
@@ -48,33 +32,33 @@
 
             <div class="input-field col s6 offset-s3 m-bottom">
                 <i class="material-icons prefix">perm_identity</i>
-                <input id="user" type="text" name="user" class="center-align m-bottom-input"/>
+                <input id="user" type="text" name="user" class="center-align" value="{{user.4}}" disabled/>
                 <label for="user">User</label>
             </div>
             <div id="errorUser" class="col s6 offset-s4 error-form" hidden></div>
 
             <div class="input-field col s6 offset-s3 m-bottom">
                 <i class="material-icons prefix">lock_outline</i>
-                <input id="password" type="password" name="password" class="center-align m-bottom-input"/>
+                <input id="password" type="password" name="password" class="center-align"/>
                 <span class="eye-password">
                     <i id="eyePassword" class="material-icons icon" onclick="togglePassword()">remove_red_eye</i>    
                 </span>
-                <label for="password">Password</label>
+                <label for="password">New Password</label>
             </div>
             <div id="errorPassword" class="col s6 offset-s4 error-form" hidden></div>
 
             <div class="input-field col s6 offset-s3 m-bottom">
                 <i class="material-icons prefix">lock_outline</i>
-                <input id="confirmpassword" type="password" name="confirmpassword" class="center-align m-bottom-input"/>
+                <input id="confirmpassword" type="password" name="confirmpassword" class="center-align"/>
                 <span class="eye-password">
                     <i id="eyeConfirmPassword" class="material-icons icon" onclick="toggleConfirmPassword()">remove_red_eye</i>    
                 </span>
-                <label for="confirmpassword">Confirm Password</label>
+                <label for="confirmpassword">Confirm New Password</label>
             </div>
             <div id="errorConfirmPassword" class="col s6 offset-s4 error-form" hidden></div>
 
             <div class="col s6 offset-s3">
-                <button id="btn-adduser" type="submit" class="btn green darken-2 waves-effect waves-light botones-hover btn-save">
+                <button type="submit" class="btn green darken-2 waves-effect waves-light botones-hover btn-save">
                     <i class="material-icons left">save</i>
                     Save
                 </button>
@@ -82,6 +66,7 @@
         </form>
     </div>
 
-    <script src="{{ url_for('static', filename = 'js/addUser.js') }}"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+    <script src="{{ url_for('static', filename = 'js/editUser.js') }}"></script>
 {% endblock %}
-

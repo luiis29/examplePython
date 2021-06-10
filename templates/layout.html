@@ -5,7 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename = 'css/layout.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename = 'css/index.css') }}" />
@@ -22,7 +21,7 @@
         </a>
         <ul id="nav-mobile" class="right hide-on-small-only">
             <li>
-                <a href="/" class="white-text">
+                <a href="/users" class="white-text">
                     <i class="material-icons left white-text">people</i>
                     Users
                 </a>
@@ -34,7 +33,7 @@
                 </a>
             </li>
             <li>
-                <a href="/" class="white-text logout">
+                <a href="/logout" class="white-text logout">
                     <i class="material-icons left white-text">exit_to_app</i>
                     Logout
                 </a>
@@ -44,7 +43,7 @@
 
     <ul class="sidenav navbar-fondo" id="menu-responsive">
         <li>
-            <a href="/" class="white-text">
+            <a href="/users" class="white-text">
                 <i class="material-icons left white-text">people</i>
                 Users
             </a>
@@ -56,7 +55,7 @@
             </a>
         </li>
         <li>
-            <a href="/" class="white-text">
+            <a href="/logout" class="white-text">
                 <i class="material-icons left white-text">exit_to_app</i>
                 Logout
             </a>
@@ -75,6 +74,7 @@
     </footer>
 
     <!--Scripts-->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="{{ url_for('static', filename = 'js/index.js') }}"></script>
 </body>
