@@ -26,7 +26,7 @@ $(document).ready(function() {
             type: "POST",
             success: function({status, mensaje}) {
                 if(status) {
-                    location.href = "/users"
+                    location.href = "/home"
                     loading.style.display = "none";
                 } else {
                     error.innerHTML = iconMessage + mensaje;

@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from MySQLdb import Connection
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, make_response
 from flask.sessions import SessionInterface
 from flask_mysqldb import MySQL
@@ -13,6 +14,7 @@ from config import DevelopmentConfig
 import json
 import sys
 import jwt
+import cgi
 
 app = Flask(__name__)
 
@@ -40,33 +42,53 @@ def before_request():
         token = ""
         print("The token does not exist")
 
-    roles2 = {
-        "role1": ["addUser", "insert_user", "delete_user","update_user", "get_user", "home"],
-        "role2": ["addUser", "insert_user", "delete_user","update_user"]
-    }
+    try:
+        permission = session["permissions"]
+    except:
+        permission = ""
+        print("The permission does not exist")
 
-    if not token and request.endpoint in ["delete_user", "Index", "addUser", "insert_user", "get_user", "update_user"]:
+    if not token and request.endpoint not in ["login", "static", "ajax_login"]:
         return redirect(url_for("login"))
+    
     try:
         data = jwt.decode(token, "secret", algorithms=["HS256"])
 
+        print("Valid token")
         if request.endpoint in ["login"] :
-            flash("Ya estas logueado", "error")
-            return redirect(url_for("Index"))
+            return redirect(url_for("home"))
 
-        elif session["role"] in list(roles2) and request.endpoint in roles2[session["role"]] :
+        elif permission != None and permission != "": 
+            if request.endpoint in permission :
+                flash("No tienes permisos", "error")
+                return redirect(url_for("home"))
+
+        elif request.endpoint not in ["home","static","logout"]:
             flash("No tienes permisos", "error")
-            return redirect(url_for("Index"))
+            return redirect(url_for("home"))
         
     except:
         print("Invalid token")
-        if request.endpoint in ["delete_user", "Index", "addUser", "insert_user", "get_user", "update_user"] :
-            return redirect(url_for("login"))
+        if request.endpoint not in ["login", "static", "ajax_login"] :
+            if request.endpoint in ["ajax_edit_user", "ajax_add_user", "ajax_obtener_user"] :
+                session.pop("token")
+                session.pop("permissions")
+                return {"status": "Token", "mensaje": "Invalid token"}
+            else :
+                session.pop("token")
+                session.pop("permissions")
+                return redirect(url_for("login"))
 
 
+""" Start login endpoints """
 @app.route("/")
 def root():
     return redirect(url_for("login"))
+
+
+@app.route("/login")
+def login():
+    return render_template("login.html")
 
 
 @app.route("/ajax-login", methods = ["POST"])
@@ -76,15 +98,17 @@ def ajax_login():
         username = request.form["username"]
         password = request.form["password"]
         cur = mysql.connection.cursor()
-        user = cur.execute("SELECT u.*, r.name FROM users AS u INNER JOIN role AS r ON u.idrole = r.idrole   WHERE user = %s LIMIT 1", [username])
+        user = cur.execute("SELECT u.*, per.endpoints FROM users AS u LEFT JOIN permissions AS per ON u.iduser = per.iduser WHERE user = %s LIMIT 1", [username])
         data = cur.fetchall()
-        if user > 0 and check_password_hash(data[0][5], password) :
+        if user > 0 and check_password_hash(data[0][4], password) :
             token = jwt.encode({
                 "username": username,
                 "exp": (datetime.utcnow() + timedelta(minutes=30))
             }, "secret")
             session["token"] = token 
-            session["role"] = data[0][6]
+            permissions = data[0][5].split(",")
+            session["permissions"] = permissions
+
             response = {"status": True, "mensaje": "Successfully authenticated"}
         else :
             response = {"status": False, "mensaje": "Incorrect username or password"}
@@ -92,120 +116,145 @@ def ajax_login():
         print(str(sys.exc_info()[0]))
         response = {"status": 400, "mensaje": "Error: an exemption occurred"}
     return response
-
-
-@app.route("/login")
-def login():
-    return render_template("login.html")
-
+""" End login endpoints """
 
 @app.route("/logout")
 def logout():
     if "token" in session:
         session.pop("token")
+        session.pop("permissions")
     return redirect(url_for("login"))
 
 
+""" Start users endpoints """
 @app.route("/users")
-def Index():
+def consult_users():
     cur = mysql.connection.cursor()
-    cur.execute("SELECT u.*, r.name FROM users AS u INNER JOIN role AS r ON u.idrole = r.idrole")
+    cur.execute("SELECT *  FROM users ")
     data = cur.fetchall()
-    return render_template("index.html", users = data)
+    return render_template("index.html", users = data, permisssion = session["permissions"])
 
 
-@app.route("/addUser")
-def addUser():
-    return render_template("addUser.html")
-
-
-@app.route("/insert", methods=["POST"])
-def insert_user():
-    if request.method == "POST":
-        names = request.form["names"]
-        lastname = request.form["lastname"]
-        role = request.form["role"]
-        user = request.form["user"]
-        password = request.form["password"]
-        curselect = mysql.connection.cursor()
-        registers = curselect.execute("SELECT * FROM users WHERE user = %s LIMIT 1", [user])
-        if registers > 0 :
-            flash("Username not available ", "error")
-            return redirect(url_for("addUser"))
-        else :
-            cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO users (names, lastname, idrole, user, password) VALUES (%s, %s, %s, %s, %s)",
-            (names, lastname, role, user, generate_password_hash(password)))
-            mysql.connection.commit()
-            flash("User Added Successfully", "success")
-            return redirect(url_for("Index"))
-
-
-@app.route("/editUser/<id>")
-def get_user(id):
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM users WHERE id = %s", [id])
-    data = cur.fetchall()
-    return render_template("editUser.html", user = data[0])
-
-
-@app.route("/update/<id>", methods = ["POST"])
-def update_user(id):
-    if request.method == "POST":
-        names = request.form["names"]
-        lastname = request.form["lastname"]
-        #user = request.form["user"]
-        password = request.form["password"]
-        cur = mysql.connection.cursor()
-        if password == "" :
-            cur.execute("""
-                UPDATE users
-                    SET names = %s,
-                        lastname = %s
-                WHERE id = %s
-            """, (names, lastname, id))
-        else :
-            cur.execute("""
-                UPDATE users
-                    SET names = %s,
-                        lastname = %s,
-                        password = %s
-                WHERE id = %s
-            """, (names, lastname, password, id))
-        cur.connection.commit()
-        flash("User Updated Succesfully" , "success")
-        return redirect(url_for("Index"))
-
-
-@app.route("/delete/<string:id>")
-def delete_user(id):
-    cur = mysql.connection.cursor()
-    #cur.execute("DELETE FROM users WHERE id = {0}".format(id))
-    cur.execute("DELETE FROM users WHERE id = %s", [id])
-    mysql.connection.commit()
-    flash("User Removed Successfully" , "success")
-    return redirect(url_for("Index"))
-
-
-@app.route("/home")
-def home():
-    return render_template("home.html")
-
-
-@app.route("/ajax-obtener-user/<id>")
+@app.route("/ajax-get-user-permission/<id>")
 def ajax_obtener_user(id):
     try:
         cur = mysql.connection.cursor()
-        user = cur.execute("SELECT * FROM users WHERE id = %s", [id])
+        user = cur.execute("SELECT per.* FROM users AS u LEFT JOIN permissions AS per ON u.iduser = per.iduser WHERE u.iduser = %s LIMIT 1", [id])
         data = cur.fetchall()
         if user > 0 :
-            return ({"status": True, "idrole": str(data[0][3])})
+            return ({"status": True, "permissions": data})
         else :
             print("Error when retrieving the user")
             return ({"status": False, "mensaje": "Error when retrieving the user"})
     except:
         print("An exception occurred when recovering the user")
         return ({"status": False, "mensaje": "An exception occurred when recovering the user"})
+
+
+@app.route("/addUser")
+def add_user():
+    return render_template("addUser.html")
+
+
+@app.route("/ajax-add-user/<permission>/<selected>/<unselected>", methods = ["POST"])
+def ajax_add_user(permission, selected, unselected):
+    if request.method == "POST":
+        response = ""
+        try: 
+            names = request.form["names"]
+            lastname = request.form["lastname"]
+            user = request.form["user"]
+            password = request.form["password"]
+            curselect = mysql.connection.cursor()
+            registers = curselect.execute("SELECT * FROM users WHERE user = %s LIMIT 1", [user])
+            if registers > 0 :
+                response = {"status":  False, "mensaje": "Username not available"}
+            else :
+                cur = mysql.connection.cursor()
+                cur.execute("INSERT INTO users (names, lastname, user, password) VALUES (%s, %s, %s, %s, %s)",
+                (names, lastname, user, generate_password_hash(password)))
+                idUser = cur.lastrowid
+                cur.connection.commit()
+
+                cur = mysql.connection.cursor()
+                cur.execute("INSERT INTO permissions (iduser, endpoints," + permission + ") VALUES (%s, %s," + selected + ")",
+                (str(idUser), unselected))
+                cur.connection.commit()
+                
+                flash("User Added Successfully", "success")
+                response = {"status": True, "mensaje": "User Added Successfully"}
+        except:
+            print(str(sys.exc_info()[0]))
+            flash("Error creating user", "error")
+            response = {"status": 400, "mensaje": "Error: an exemption occurred"}
+        return response
+
+
+@app.route("/editUser/<id>")
+def edit_user(id):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM users WHERE iduser = %s", [id])
+    data = cur.fetchall()
+    return render_template("editUser.html", user = data[0])
+
+
+@app.route("/ajax-edit-user/<iduser>/<permission>/<selected>/<unselected>", methods = ["POST"])
+def ajax_edit_user(iduser, permission, selected, unselected):
+    if request.method == "POST":
+        response = ""
+        try:
+            names = request.form["names"]
+            lastname = request.form["lastname"]
+            password = request.form["password"]
+            cur = mysql.connection.cursor()
+            if password == "" :
+                cur.execute("""
+                    UPDATE users
+                        SET names = %s,
+                            lastname = %s
+                    WHERE iduser = %s
+                """, (names, lastname, iduser))
+            else :
+                cur.execute("""
+                    UPDATE users
+                        SET names = %s,
+                            lastname = %s,
+                            password = %s
+                    WHERE iduser = %s
+                """, (names, lastname, password, iduser))
+            cur.connection.commit()
+
+            permissions = permission.split(",")
+            selected = selected.split(",")
+            cont = 0
+            for per in permissions :
+                cur = mysql.connection.cursor()
+                cur.execute("UPDATE permissions SET endpoints = %s, {0}".format(per) + " = %s WHERE iduser = %s", (unselected, selected[cont], iduser))
+                cur.connection.commit()
+                cont += 1
+
+            flash("User Updated Succesfully" , "success")
+            response = {"status": True, "mensaje": "User Updated Succesfully"}
+        except:
+            print(str(sys.exc_info()[0]))
+            flash("Error when editing user", "error")
+            response = {"status": 400, "mensaje": "Error: an exemption occurred"}
+        return response
+
+
+@app.route("/delete/<string:id>")
+def delete_user(id):
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM users WHERE iduser = %s", [id])
+    mysql.connection.commit()
+    flash("User Removed Successfully" , "success")
+    return redirect(url_for("consult_users"))
+""" End users endpoints """
+
+
+@app.route("/home")
+def home():
+    return render_template("home.html", permisssion = session["permissions"])
 
 
 if __name__ == '__main__':

@@ -3,85 +3,99 @@
 {% block body %}
     <p class="encabezado">Add user</p>
     <br/>
-    {% with messages = get_flashed_messages(with_categories=True) %}
-        {% if messages %}
-            {% for typemessage, message in messages %}
-                <div id="alerta" class="row">
-                    <div class="col s6 alert {{typemessage}}">
-                        <button class="btn-alert btn-alert-{{typemessage}}" onclick="ocultarAlerta();">
-                            X
-                        </button>
-                        {{message}}
-                    </div>
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
     
     <div class="row">
-        <form action="/insert" method="POST" id="formAddUser">
-            <input type="hidden" name="csrf_token" value="{{csrf_token()}}" />
-            <div class="input-field col s6 offset-s3 m-bottom">
-                <i class="material-icons prefix">account_circle</i>
-                <input id="names"  type="text" name="names" class="center-align m-bottom-input"/>
-                <label for="names">Names</label>
-            </div>
-            <div id="errorNames" class="col s6 offset-s4 error-form" hidden></div>
+        <div class="col s6 col-form">
+            <form id="formAddUser">
+                <header class="header-form">
+                    Data User
+                </header>
+                <div id="error" class="col s9 offset-s2 error-form mb-10 mt-10" hidden></div>
+                <input type="hidden" name="csrf_token" value="{{csrf_token()}}" />
+                <div class="input-field col s10 offset-s1 m-bottom">
+                    <i class="material-icons prefix icon-color">account_circle</i>
+                    <input id="names"  type="text" name="names" class="center-align m-bottom-input"/>
+                    <label for="names">Names</label>
+                </div>
+                <div id="errorNames" class="col s9 offset-s2 error-form" hidden></div>
+    
+                <div class="input-field col s10 offset-s1 m-bottom">
+                    <i class="material-icons prefix icon-color">account_circle</i>
+                    <input id="lastname" type="text" name="lastname" class="center-align m-bottom-input"/>
+                    <label for="lastname">Last Name</label>
+                </div>
+                <div id="errorLastName" class="col s9 offset-s2 error-form" hidden></div>
+    
+                <div class="input-field col s10 offset-s1 m-bottom">
+                    <i class="material-icons prefix icon-color">perm_identity</i>
+                    <input id="user" type="text" name="user" class="center-align m-bottom-input"/>
+                    <label for="user">User</label>
+                </div>
+                <div id="errorUser" class="col s11 s9 offset-s2 error-form" hidden></div>
+    
+                <div class="input-field col s10 offset-s1 m-bottom">
+                    <i class="material-icons prefix icon-color">lock_outline</i>
+                    <input id="password" type="password" name="password" class="center-align m-bottom-input"/>
+                    <span class="eye-password">
+                        <i id="eyePassword" class="material-icons icon" onclick="togglePassword()">remove_red_eye</i>    
+                    </span>
+                    <label for="password">Password</label>
+                </div>
+                <div id="errorPassword" class="col s9 offset-s2 error-form" hidden></div>
+    
+                <div class="input-field col s10 offset-s1 m-bottom">
+                    <i class="material-icons prefix icon-color">lock_outline</i>
+                    <input id="confirmpassword" type="password" name="confirmpassword" class="center-align m-bottom-input"/>
+                    <span class="eye-password">
+                        <i id="eyeConfirmPassword" class="material-icons icon" onclick="toggleConfirmPassword()">remove_red_eye</i>    
+                    </span>
+                    <label for="confirmpassword">Confirm Password</label>
+                </div>
+                <div id="errorConfirmPassword" class="col s9 offset-s2 error-form" hidden></div>
+    
+                <div class="col s6 offset-s3">
+                    <button class="btn green darken-2 waves-effect waves-light botones-hover btn-save">
+                        <i class="material-icons left">save</i>
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
 
-            <div class="input-field col s6 offset-s3 m-bottom">
-                <i class="material-icons prefix">account_circle</i>
-                <input id="lastname" type="text" name="lastname" class="center-align m-bottom-input"/>
-                <label for="lastname">Last Name</label>
-            </div>
-            <div id="errorLastName" class="col s6 offset-s4 error-form" hidden></div>
-
-            <div class="input-field col s6 offset-s3  m-bottom">
-                <i class="material-icons prefix">account_circle</i>
-                <select name="role" id="role">
-                    <option disabled selected>Select role</option>
-                    <option value="1">Administrator</option>
-                    <option value="2">Role 1</option>
-                    <option value="3">Role 2</option>
-                </select>
-            </div>
-            <div id="errorRole" class="col s6 offset-s4 error-form" hidden></div>
-
-            <div class="input-field col s6 offset-s3 m-bottom">
-                <i class="material-icons prefix">perm_identity</i>
-                <input id="user" type="text" name="user" class="center-align m-bottom-input"/>
-                <label for="user">User</label>
-            </div>
-            <div id="errorUser" class="col s6 offset-s4 error-form" hidden></div>
-
-            <div class="input-field col s6 offset-s3 m-bottom">
-                <i class="material-icons prefix">lock_outline</i>
-                <input id="password" type="password" name="password" class="center-align m-bottom-input"/>
-                <span class="eye-password">
-                    <i id="eyePassword" class="material-icons icon" onclick="togglePassword()">remove_red_eye</i>    
-                </span>
-                <label for="password">Password</label>
-            </div>
-            <div id="errorPassword" class="col s6 offset-s4 error-form" hidden></div>
-
-            <div class="input-field col s6 offset-s3 m-bottom">
-                <i class="material-icons prefix">lock_outline</i>
-                <input id="confirmpassword" type="password" name="confirmpassword" class="center-align m-bottom-input"/>
-                <span class="eye-password">
-                    <i id="eyeConfirmPassword" class="material-icons icon" onclick="toggleConfirmPassword()">remove_red_eye</i>    
-                </span>
-                <label for="confirmpassword">Confirm Password</label>
-            </div>
-            <div id="errorConfirmPassword" class="col s6 offset-s4 error-form" hidden></div>
-
-            <div class="col s6 offset-s3">
-                <button id="btn-adduser" type="submit" class="btn green darken-2 waves-effect waves-light botones-hover btn-save">
-                    <i class="material-icons left">save</i>
-                    Save
-                </button>
-            </div>
-        </form>
+        <div class="col s4 offset-s2 col-form">
+            <header class="header-form">
+                Permissions
+            </header>
+            <ul class="collapsible m-0 shadow-none border-none">
+                <li class="mb-5">
+                    <div class="collapsible-header border-none mt-10 mb-10 ml-10 p-0">
+                        <i class="material-icons">add</i>
+                        Users
+                    </div>
+                    <div class="collapsible-body mt-5 ml-30 mb-10 border-none p-0">
+                        <label class="mt-5">
+                            <input type="checkbox" value="consult_users" class="valores"/>
+                            <span>Consult users</span>
+                        </label> <br>
+                        <label class="mt-5">
+                            <input type="checkbox" value="add_user" class="valores"/>
+                            <span>Add users</span>
+                        </label> <br>
+                        <label class="mt-5">
+                            <input type="checkbox" value="edit_user" class="valores"/>
+                            <span>Edit users</span>
+                        </label> <br>
+                        <label class="mt-5">
+                            <input type="checkbox" value="delete_user" class="valores"/>
+                            <span>Delete users</span>
+                        </label>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
 
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="{{ url_for('static', filename = 'js/addUser.js') }}"></script>
 {% endblock %}
 

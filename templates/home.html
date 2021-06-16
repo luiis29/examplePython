@@ -2,5 +2,14 @@
 
 {% block body %}
     <p class="encabezado">Welcome to Home</p>
-
+    <div class="row">
+        <div class="col s12">
+            {% if 'consult_users' not in permisssion %}    
+                <a href="/users" class=" btn green darken-3 waves-effect waves-light botones-hover white-text right">
+                    <i class="material-icons left white-text">people</i>
+                    Users
+                </a>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

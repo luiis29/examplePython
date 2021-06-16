@@ -4,66 +4,94 @@
     <p class="encabezado">Edit user</p>
 
     <div class="row">
-        <form action="/update/{{user.0}}" method="POST" id="formEditUser">
-            <input type="hidden" name="csrf_token" value="{{csrf_token()}}" />
-            <div class="input-field col s6 offset-s3 m-bottom">
-                <i class="material-icons prefix">account_circle</i>
-                <input id="names" type="text" name="names" class="center-align" value="{{user.1}}"/>
-                <label for="names">Nombres</label>
-            </div>
-            <div id="errorNames" class="col s6 offset-s4 error-form" hidden></div>
+        <div class="col s6 col-form">
+            <form id="formEditUser">
+                <header class="header-form">
+                    Data User
+                </header>
+                <div id="error" class="col s9 offset-s2 error-form mb-10 mt-10" hidden></div>
+                <input type="hidden" name="csrf_token" value="{{csrf_token()}}" />
+                <div class="input-field col s10 offset-s1 m-bottom">
+                    <i class="material-icons prefix icon-color">account_circle</i>
+                    <input id="names" type="text" name="names" class="center-align m-bottom-input" value="{{user.1}}"/>
+                    <label for="names">Nombres</label>
+                </div>
+                <div id="errorNames" class="col s9 offset-s2 error-form" hidden></div>
 
-            <div class="input-field col s6 offset-s3 m-bottom">
-                <i class="material-icons prefix">account_circle</i>
-                <input id="lastname" type="text" name="lastname" class="center-align" value="{{user.2}}"/>
-                <label for="lastname">Last Name</label>
-            </div>
-            <div id="errorLastName" class="col s6 offset-s4 error-form" hidden></div>
-            
-            <div class="input-field col s6 offset-s3 m-bottom">
-                <i class="material-icons prefix">account_circle</i>
-                <select name="role" id="role" class="selectpicker">
-                    <option value="1">Administrator</option>
-                    <option value="2">Role 1</option>
-                    <option value="3">Role 2</option>
-                </select>
-            </div>
-            <div id="errorRole" class="col s6 offset-s4 error-form" hidden></div>
+                <div class="input-field col s10 offset-s1 m-bottom">
+                    <i class="material-icons prefix icon-color">account_circle</i>
+                    <input id="lastname" type="text" name="lastname" class="center-align m-bottom-input" value="{{user.2}}"/>
+                    <label for="lastname">Last Name</label>
+                </div>
+                <div id="errorLastName" class="col s9 offset-s2 error-form" hidden></div>
 
-            <div class="input-field col s6 offset-s3 m-bottom">
-                <i class="material-icons prefix">perm_identity</i>
-                <input id="user" type="text" name="user" class="center-align" value="{{user.4}}" disabled/>
-                <label for="user">User</label>
-            </div>
-            <div id="errorUser" class="col s6 offset-s4 error-form" hidden></div>
+                <div class="input-field col s10 offset-s1 m-bottom">
+                    <i class="material-icons prefix icon-color">perm_identity</i>
+                    <input id="user" type="text" name="user" class="center-align m-bottom-input" value="{{user.3}}" disabled/>
+                    <label for="user">User</label>
+                </div>
+                <div id="errorUser" class="col s9 offset-s2 error-form" hidden></div>
 
-            <div class="input-field col s6 offset-s3 m-bottom">
-                <i class="material-icons prefix">lock_outline</i>
-                <input id="password" type="password" name="password" class="center-align"/>
-                <span class="eye-password">
-                    <i id="eyePassword" class="material-icons icon" onclick="togglePassword()">remove_red_eye</i>    
-                </span>
-                <label for="password">New Password</label>
-            </div>
-            <div id="errorPassword" class="col s6 offset-s4 error-form" hidden></div>
+                <div class="input-field col s10 offset-s1 m-bottom">
+                    <i class="material-icons prefix icon-color">lock_outline</i>
+                    <input id="password" type="password" name="password" class="center-align m-bottom-input"/>
+                    <span class="eye-password">
+                        <i id="eyePassword" class="material-icons icon" onclick="togglePassword()">remove_red_eye</i>    
+                    </span>
+                    <label for="password">New Password</label>
+                </div>
+                <div id="errorPassword" class="col s9 offset-s2 error-form" hidden></div>
 
-            <div class="input-field col s6 offset-s3 m-bottom">
-                <i class="material-icons prefix">lock_outline</i>
-                <input id="confirmpassword" type="password" name="confirmpassword" class="center-align"/>
-                <span class="eye-password">
-                    <i id="eyeConfirmPassword" class="material-icons icon" onclick="toggleConfirmPassword()">remove_red_eye</i>    
-                </span>
-                <label for="confirmpassword">Confirm New Password</label>
-            </div>
-            <div id="errorConfirmPassword" class="col s6 offset-s4 error-form" hidden></div>
+                <div class="input-field col s10 offset-s1 m-bottom">
+                    <i class="material-icons prefix icon-color">lock_outline</i>
+                    <input id="confirmpassword" type="password" name="confirmpassword" class="center-align m-bottom-input"/>
+                    <span class="eye-password">
+                        <i id="eyeConfirmPassword" class="material-icons icon" onclick="toggleConfirmPassword()">remove_red_eye</i>    
+                    </span>
+                    <label for="confirmpassword">Confirm New Password</label>
+                </div>
+                <div id="errorConfirmPassword" class="col s9 offset-s2 error-form" hidden></div>
 
-            <div class="col s6 offset-s3">
-                <button type="submit" class="btn green darken-2 waves-effect waves-light botones-hover btn-save">
-                    <i class="material-icons left">save</i>
-                    Save
-                </button>
-            </div>
-        </form>
+                <div class="col s6 offset-s3">
+                    <button type="submit" class="btn green darken-2 waves-effect waves-light botones-hover btn-save">
+                        <i class="material-icons left">save</i>
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="col s4 offset-s2 col-form">
+            <header class="header-form">
+                Permissions
+            </header>
+            <ul class="collapsible m-0 shadow-none border-none">
+                <li class="mb-5">
+                    <div class="collapsible-header border-none mt-10 mb-10 ml-10 p-0">
+                        <i class="material-icons">add</i>
+                        Users
+                    </div>
+                    <div class="collapsible-body mt-5 ml-30 mb-10 border-none p-0">
+                        <label class="mt-5">
+                            <input type="checkbox" id="consult_users" value="consult_users" class="valores"/>
+                            <span>Consult users</span>
+                        </label> <br>
+                        <label class="mt-5">
+                            <input type="checkbox" id="add_user" value="add_user" class="valores"/>
+                            <span>Add users</span>
+                        </label> <br>
+                        <label class="mt-5">
+                            <input type="checkbox" id="edit_user" value="edit_user" class="valores"/>
+                            <span>Edit users</span>
+                        </label> <br>
+                        <label class="mt-5">
+                            <input type="checkbox" id="delete_user" value="delete_user" class="valores"/>
+                            <span>Delete users</span>
+                        </label>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
